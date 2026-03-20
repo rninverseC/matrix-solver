@@ -30,4 +30,4 @@ clang++ -std=c++17 -O2 -Wall -Wextra -pedantic -Iinclude src/*.cpp -o matrix_cal
 - Solve `Ax = b`
 
 ## Notes
-not working
+Works!
