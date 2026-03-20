@@ -121,7 +121,7 @@ void handleSolveLinearSystem() {
 }
 
 void printMenu() {
-    std::cout << "\n=== Linear Algebra Matrix Calculator ===\n";
+    std::cout << "\n=== Ultimate Calculator ===\n";
     std::cout << " 1. Add two matrices\n";
     std::cout << " 2. Subtract two matrices\n";
     std::cout << " 3. Multiply a matrix by a scalar\n";
