@@ -1,4 +1,4 @@
-# Linear Algebra Matrix Calculator
+# A calculator for my Lin-Alg class
 
 This project is a C++ command-line matrix calculator focused on 12 core matrix operations.
 
