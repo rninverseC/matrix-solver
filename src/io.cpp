@@ -12,7 +12,7 @@ using namespace std;
 namespace matrix_solver {
 
 bool isZero(ld value, ld tolerance) {
-    return std::fabsl(value) < tolerance;
+    return std::fabs(value) < tolerance;
 }
 
 ld cleanValue(ld value) {
@@ -20,7 +20,7 @@ ld cleanValue(ld value) {
 }
 
 bool nearlyEqual(ld a, ld b, ld tolerance) {
-    return std::fabsl(a - b) < tolerance;
+    return std::fabs(a - b) < tolerance;
 }
 
 void cleanVector(std::vector<ld>& values) {

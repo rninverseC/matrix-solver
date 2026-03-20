@@ -2,7 +2,6 @@
 
 #include "matrix_solver/io.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 #include <vector>
@@ -15,8 +14,9 @@ namespace {
 
 Matrix augmentMatrices(const Matrix& left, const Matrix& right) {
     if (left.rows != right.rows) {
-        throw std::runtime_error("Matrices must have the same number of rows to be augmented.");
+        throw runtime_error("Matrices must have the same number of rows to be augmented.");
     }
+
     Matrix result(left.rows, left.cols + right.cols, 0.0L);
     for (int i = 0; i < result.rows; ++i) {
         for (int j = 0; j < left.cols; ++j) {
@@ -29,43 +29,48 @@ Matrix augmentMatrices(const Matrix& left, const Matrix& right) {
     return result;
 }
 
-std::vector<std::vector<ld>> buildNullSpaceBasis(const Matrix& matrix) {
+vector<vector<ld>> buildNullSpaceBasis(const Matrix& matrix) {
     const auto reduced = toRref(matrix);
-    std::vector<bool> isPivotColumn(matrix.cols, false);
+    vector<bool> isPivotColumn(matrix.cols, false);
+
     for (int pivotColumn : reduced.pivotColumns) {
         if (pivotColumn < matrix.cols) {
             isPivotColumn[pivotColumn] = true;
         }
     }
 
-    std::vector<std::vector<ld>> basis;
+    vector<vector<ld>> basis;
     for (int freeColumn = 0; freeColumn < matrix.cols; ++freeColumn) {
         if (isPivotColumn[freeColumn]) {
             continue;
         }
 
-        std::vector<ld> vector(matrix.cols, 0.0L);
-        vector[freeColumn] = 1.0L;
+        vector<ld> basisVector(matrix.cols, 0.0L);
+        basisVector[freeColumn] = 1.0L;
+
         for (int pivotRow = 0; pivotRow < reduced.rank; ++pivotRow) {
             const int pivotColumn = reduced.pivotColumns[pivotRow];
             if (pivotColumn < matrix.cols) {
-                vector[pivotColumn] = -reduced.matrix[pivotRow][freeColumn];
+                basisVector[pivotColumn] = -reduced.matrix[pivotRow][freeColumn];
             }
         }
-        cleanVector(vector);
-        basis.push_back(vector);
+
+        cleanVector(basisVector);
+        basis.push_back(basisVector);
     }
+
     return basis;
 }
 
 }  // namespace
 
-ld dotProduct(const std::vector<ld>& a, const std::vector<ld>& b) {
+ld dotProduct(const vector<ld>& a, const vector<ld>& b) {
     if (a.size() != b.size()) {
-        throw std::runtime_error("Vectors must have the same length for a dot product.");
+        throw runtime_error("Vectors must have the same length for a dot product.");
     }
+
     ld sum = 0.0L;
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (size_t i = 0; i < a.size(); ++i) {
         sum += a[i] * b[i];
     }
     return cleanValue(sum);
@@ -73,28 +78,32 @@ ld dotProduct(const std::vector<ld>& a, const std::vector<ld>& b) {
 
 Matrix addMatrices(const Matrix& a, const Matrix& b) {
     if (a.rows != b.rows || a.cols != b.cols) {
-        throw std::runtime_error("Matrix sizes must match for addition.");
+        throw runtime_error("Matrix sizes must match for addition.");
     }
+
     Matrix result(a.rows, a.cols, 0.0L);
     for (int i = 0; i < a.rows; ++i) {
         for (int j = 0; j < a.cols; ++j) {
             result[i][j] = a[i][j] + b[i][j];
         }
     }
+
     cleanMatrix(result);
     return result;
 }
 
 Matrix subtractMatrices(const Matrix& a, const Matrix& b) {
     if (a.rows != b.rows || a.cols != b.cols) {
-        throw std::runtime_error("Matrix sizes must match for subtraction.");
+        throw runtime_error("Matrix sizes must match for subtraction.");
     }
+
     Matrix result(a.rows, a.cols, 0.0L);
     for (int i = 0; i < a.rows; ++i) {
         for (int j = 0; j < a.cols; ++j) {
             result[i][j] = a[i][j] - b[i][j];
         }
     }
+
     cleanMatrix(result);
     return result;
 }
@@ -106,6 +115,7 @@ Matrix scalarMultiply(const Matrix& matrix, ld scalar) {
             result[i][j] = matrix[i][j] * scalar;
         }
     }
+
     cleanMatrix(result);
     return result;
 }
@@ -117,14 +127,16 @@ Matrix transpose(const Matrix& matrix) {
             result[j][i] = matrix[i][j];
         }
     }
+
     cleanMatrix(result);
     return result;
 }
 
 Matrix multiplyMatrices(const Matrix& a, const Matrix& b) {
     if (a.cols != b.rows) {
-        throw std::runtime_error("Inner dimensions must match for matrix multiplication.");
+        throw runtime_error("Inner dimensions must match for matrix multiplication.");
     }
+
     Matrix result(a.rows, b.cols, 0.0L);
     for (int i = 0; i < a.rows; ++i) {
         for (int k = 0; k < a.cols; ++k) {
@@ -136,6 +148,7 @@ Matrix multiplyMatrices(const Matrix& a, const Matrix& b) {
             }
         }
     }
+
     cleanMatrix(result);
     return result;
 }
@@ -148,8 +161,9 @@ EliminationResult toRef(Matrix matrix) {
     for (int col = 0; col < matrix.cols && pivotRow < matrix.rows; ++col) {
         int bestRow = pivotRow;
         ld bestValue = 0.0L;
+
         for (int row = pivotRow; row < matrix.rows; ++row) {
-            const ld candidate = std::fabsl(matrix[row][col]);
+            const ld candidate = fabs(matrix[row][col]);
             if (candidate > bestValue) {
                 bestValue = candidate;
                 bestRow = row;
@@ -161,7 +175,7 @@ EliminationResult toRef(Matrix matrix) {
         }
 
         if (bestRow != pivotRow) {
-            std::swap(matrix[bestRow], matrix[pivotRow]);
+            swap(matrix[bestRow], matrix[pivotRow]);
             ++swapCount;
         }
 
@@ -170,6 +184,7 @@ EliminationResult toRef(Matrix matrix) {
             if (isZero(matrix[row][col])) {
                 continue;
             }
+
             const ld factor = matrix[row][col] / pivotValue;
             for (int current = col; current < matrix.cols; ++current) {
                 matrix[row][current] -= factor * matrix[pivotRow][current];
@@ -196,8 +211,9 @@ EliminationResult toRref(Matrix matrix) {
     for (int col = 0; col < matrix.cols && pivotRow < matrix.rows; ++col) {
         int bestRow = pivotRow;
         ld bestValue = 0.0L;
+
         for (int row = pivotRow; row < matrix.rows; ++row) {
-            const ld candidate = std::fabsl(matrix[row][col]);
+            const ld candidate = fabs(matrix[row][col]);
             if (candidate > bestValue) {
                 bestValue = candidate;
                 bestRow = row;
@@ -209,7 +225,7 @@ EliminationResult toRref(Matrix matrix) {
         }
 
         if (bestRow != pivotRow) {
-            std::swap(matrix[bestRow], matrix[pivotRow]);
+            swap(matrix[bestRow], matrix[pivotRow]);
             ++swapCount;
         }
 
@@ -222,6 +238,7 @@ EliminationResult toRref(Matrix matrix) {
             if (row == pivotRow || isZero(matrix[row][col])) {
                 continue;
             }
+
             const ld factor = matrix[row][col];
             for (int current = 0; current < matrix.cols; ++current) {
                 matrix[row][current] -= factor * matrix[pivotRow][current];
@@ -246,7 +263,7 @@ int rankOfMatrix(const Matrix& matrix) {
 
 ld determinant(const Matrix& matrix) {
     if (!matrix.isSquare()) {
-        throw std::runtime_error("Determinants are defined only for square matrices.");
+        throw runtime_error("Determinants are defined only for square matrices.");
     }
 
     Matrix working = matrix;
@@ -255,8 +272,9 @@ ld determinant(const Matrix& matrix) {
     for (int col = 0; col < working.cols; ++col) {
         int bestRow = col;
         ld bestValue = 0.0L;
+
         for (int row = col; row < working.rows; ++row) {
-            const ld candidate = std::fabsl(working[row][col]);
+            const ld candidate = fabs(working[row][col]);
             if (candidate > bestValue) {
                 bestValue = candidate;
                 bestRow = row;
@@ -268,7 +286,7 @@ ld determinant(const Matrix& matrix) {
         }
 
         if (bestRow != col) {
-            std::swap(working[bestRow], working[col]);
+            swap(working[bestRow], working[col]);
             sign *= -1;
         }
 
@@ -291,7 +309,7 @@ ld determinant(const Matrix& matrix) {
 
 Matrix inverseMatrix(const Matrix& matrix) {
     if (!matrix.isSquare()) {
-        throw std::runtime_error("Only square matrices can be inverted.");
+        throw runtime_error("Only square matrices can be inverted.");
     }
 
     const Matrix augmented = augmentMatrices(matrix, Matrix::identity(matrix.rows));
@@ -301,7 +319,7 @@ Matrix inverseMatrix(const Matrix& matrix) {
         for (int j = 0; j < matrix.cols; ++j) {
             const ld expected = (i == j) ? 1.0L : 0.0L;
             if (!nearlyEqual(reduced[i][j], expected)) {
-                throw std::runtime_error("This matrix is singular, so it has no inverse.");
+                throw runtime_error("This matrix is singular, so it has no inverse.");
             }
         }
     }
@@ -312,13 +330,14 @@ Matrix inverseMatrix(const Matrix& matrix) {
             inverse[i][j] = reduced[i][matrix.cols + j];
         }
     }
+
     cleanMatrix(inverse);
     return inverse;
 }
 
-LinearSystemResult solveLinearSystem(const Matrix& A, const std::vector<ld>& b) {
+LinearSystemResult solveLinearSystem(const Matrix& A, const vector<ld>& b) {
     if (A.rows != static_cast<int>(b.size())) {
-        throw std::runtime_error("The right-hand side vector must have the same number of rows as A.");
+        throw runtime_error("The right-hand side vector must have the same number of rows as A.");
     }
 
     Matrix right(A.rows, 1, 0.0L);
@@ -337,6 +356,7 @@ LinearSystemResult solveLinearSystem(const Matrix& A, const std::vector<ld>& b) 
                 break;
             }
         }
+
         if (allZero && !isZero(result.augmentedRref[row][A.cols])) {
             result.consistent = false;
             result.unique = false;
@@ -356,15 +376,17 @@ LinearSystemResult solveLinearSystem(const Matrix& A, const std::vector<ld>& b) 
                 break;
             }
         }
+
         if (pivotColumn != -1) {
             result.particularSolution[pivotColumn] = result.augmentedRref[row][A.cols];
         }
     }
-    cleanVector(result.particularSolution);
 
+    cleanVector(result.particularSolution);
     if (!result.unique) {
         result.nullSpaceBasis = buildNullSpaceBasis(A);
     }
+
     return result;
 }
 
