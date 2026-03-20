@@ -29,15 +29,5 @@ clang++ -std=c++17 -O2 -Wall -Wextra -pedantic -Iinclude src/*.cpp -o matrix_cal
 - Rank
 - Solve `Ax = b`
 
-## Project layout
-
-- `include/matrix_solver/types.hpp`: matrix/result data types
-- `include/matrix_solver/io.hpp` and `src/io.cpp`: input, formatting, and printing
-- `include/matrix_solver/operations.hpp` and `src/operations.cpp`: the 12 supported matrix algorithms
-- `include/matrix_solver/cli.hpp` and `src/cli.cpp`: menu flow and command handlers
-- `src/main.cpp`: tiny entry point
-
 ## Notes
-
-- The calculator uses floating-point arithmetic, so very ill-conditioned matrices may show small numerical error.
-- The CLI intentionally stops at the 12 operations listed above.
+not working
