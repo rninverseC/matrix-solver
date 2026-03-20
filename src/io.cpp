@@ -12,7 +12,7 @@ using namespace std;
 namespace matrix_solver {
 
 bool isZero(ld value, ld tolerance) {
-    return std::fabs(value) < tolerance;
+    return fabs(value) < tolerance;
 }
 
 ld cleanValue(ld value) {
@@ -20,10 +20,10 @@ ld cleanValue(ld value) {
 }
 
 bool nearlyEqual(ld a, ld b, ld tolerance) {
-    return std::fabs(a - b) < tolerance;
+    return fabs(a - b) < tolerance;
 }
 
-void cleanVector(std::vector<ld>& values) {
+void cleanVector(vector<ld>& values) {
     for (auto& value : values) {
         value = cleanValue(value);
     }
@@ -35,9 +35,9 @@ void cleanMatrix(Matrix& matrix) {
     }
 }
 
-std::string trimZeros(std::string value) {
+string trimZeros(string value) {
     const auto decimal = value.find('.');
-    if (decimal != std::string::npos) {
+    if (decimal != string::npos) {
         while (!value.empty() && value.back() == '0') {
             value.pop_back();
         }
@@ -51,13 +51,13 @@ std::string trimZeros(std::string value) {
     return value;
 }
 
-std::string formatNumber(ld value) {
-    std::ostringstream out;
-    out << std::fixed << std::setprecision(6) << cleanValue(value);
+string formatNumber(ld value) {
+    ostringstream out;
+    out << fixed << setprecision(6) << cleanValue(value);
     return trimZeros(out.str());
 }
 
-bool isZeroRow(const std::vector<ld>& row) {
+bool isZeroRow(const vector<ld>& row) {
     for (ld value : row) {
         if (!isZero(value)) {
             return false;
@@ -66,10 +66,10 @@ bool isZeroRow(const std::vector<ld>& row) {
     return true;
 }
 
-std::string formatVector(const std::vector<ld>& values) {
-    std::ostringstream out;
+string formatVector(const vector<ld>& values) {
+    ostringstream out;
     out << "[";
-    for (std::size_t i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         if (i > 0) {
             out << ", ";
         }
@@ -79,139 +79,138 @@ std::string formatVector(const std::vector<ld>& values) {
     return out.str();
 }
 
-void printVector(const std::vector<ld>& values, const std::string& label) {
-    std::cout << label << " = " << formatVector(values) << "\n";
+void printVector(const vector<ld>& values, const string& label) {
+    cout << label << " = " << formatVector(values) << "\n";
 }
 
-void printMatrix(const Matrix& matrix, const std::string& label) {
-    std::cout << label << " (" << matrix.rows << " x " << matrix.cols << "):\n";
+void printMatrix(const Matrix& matrix, const string& label) {
+    cout << label << " (" << matrix.rows << " x " << matrix.cols << "):\n";
     if (matrix.rows == 0 || matrix.cols == 0) {
-        std::cout << "[empty matrix]\n";
+        cout << "[empty matrix]\n";
         return;
     }
 
-    std::vector<std::vector<std::string>> rendered(
-        matrix.rows, std::vector<std::string>(matrix.cols));
-    std::vector<std::size_t> widths(matrix.cols, 0);
+    vector<vector<string>> rendered(matrix.rows, vector<string>(matrix.cols));
+    vector<size_t> widths(matrix.cols, 0);
 
     for (int i = 0; i < matrix.rows; ++i) {
         for (int j = 0; j < matrix.cols; ++j) {
             rendered[i][j] = formatNumber(matrix[i][j]);
-            widths[j] = std::max(widths[j], rendered[i][j].size());
+            widths[j] = max(widths[j], rendered[i][j].size());
         }
     }
 
     for (int i = 0; i < matrix.rows; ++i) {
-        std::cout << "[ ";
+        cout << "[ ";
         for (int j = 0; j < matrix.cols; ++j) {
-            std::cout << std::setw(static_cast<int>(widths[j])) << rendered[i][j];
+            cout << setw(static_cast<int>(widths[j])) << rendered[i][j];
             if (j + 1 < matrix.cols) {
-                std::cout << "  ";
+                cout << "  ";
             } else {
-                std::cout << " ";
+                cout << " ";
             }
         }
-        std::cout << "]\n";
+        cout << "]\n";
     }
 }
 
-void printBasis(const std::vector<std::vector<ld>>& basis, const std::string& label) {
-    std::cout << label << " basis:\n";
+void printBasis(const vector<vector<ld>>& basis, const string& label) {
+    cout << label << " basis:\n";
     if (basis.empty()) {
-        std::cout << "  {0}\n";
+        cout << "  {0}\n";
         return;
     }
-    for (std::size_t i = 0; i < basis.size(); ++i) {
-        std::cout << "  v" << (i + 1) << " = " << formatVector(basis[i]) << "\n";
+    for (size_t i = 0; i < basis.size(); ++i) {
+        cout << "  v" << (i + 1) << " = " << formatVector(basis[i]) << "\n";
     }
 }
 
-int readPositiveInt(const std::string& prompt) {
+int readPositiveInt(const string& prompt) {
     while (true) {
-        std::cout << prompt;
-        std::string line;
-        if (!std::getline(std::cin, line)) {
-            throw std::runtime_error("Input stream ended unexpectedly.");
+        cout << prompt;
+        string line;
+        if (!getline(cin, line)) {
+            throw runtime_error("Input stream ended unexpectedly.");
         }
 
-        std::istringstream iss(line);
+        istringstream iss(line);
         int value = 0;
         char extra = '\0';
         if (iss >> value && !(iss >> extra) && value > 0) {
             return value;
         }
-        std::cout << "Please enter a positive integer.\n";
+        cout << "Please enter a positive integer.\n";
     }
 }
 
-int readIntInRange(const std::string& prompt, int minValue, int maxValue) {
+int readIntInRange(const string& prompt, int minValue, int maxValue) {
     while (true) {
-        std::cout << prompt;
-        std::string line;
-        if (!std::getline(std::cin, line)) {
-            throw std::runtime_error("Input stream ended unexpectedly.");
+        cout << prompt;
+        string line;
+        if (!getline(cin, line)) {
+            throw runtime_error("Input stream ended unexpectedly.");
         }
 
-        std::istringstream iss(line);
+        istringstream iss(line);
         int value = 0;
         char extra = '\0';
         if (iss >> value && !(iss >> extra) && value >= minValue && value <= maxValue) {
             return value;
         }
-        std::cout << "Please enter an integer from " << minValue << " to " << maxValue << ".\n";
+        cout << "Please enter an integer from " << minValue << " to " << maxValue << ".\n";
     }
 }
 
-ld readLongDouble(const std::string& prompt) {
+ld readLongDouble(const string& prompt) {
     while (true) {
-        std::cout << prompt;
-        std::string line;
-        if (!std::getline(std::cin, line)) {
-            throw std::runtime_error("Input stream ended unexpectedly.");
+        cout << prompt;
+        string line;
+        if (!getline(cin, line)) {
+            throw runtime_error("Input stream ended unexpectedly.");
         }
 
-        std::istringstream iss(line);
+        istringstream iss(line);
         ld value = 0.0L;
         char extra = '\0';
         if (iss >> value && !(iss >> extra)) {
             return value;
         }
-        std::cout << "Please enter a valid number.\n";
+        cout << "Please enter a valid number.\n";
     }
 }
 
-std::vector<ld> readEntries(const std::string& prompt, int count) {
+vector<ld> readEntries(const string& prompt, int count) {
     while (true) {
-        std::cout << prompt;
-        std::string line;
-        if (!std::getline(std::cin, line)) {
-            throw std::runtime_error("Input stream ended unexpectedly.");
+        cout << prompt;
+        string line;
+        if (!getline(cin, line)) {
+            throw runtime_error("Input stream ended unexpectedly.");
         }
 
-        std::istringstream iss(line);
-        std::vector<ld> values;
+        istringstream iss(line);
+        vector<ld> values;
         ld value = 0.0L;
         while (iss >> value) {
             values.push_back(value);
         }
 
         iss.clear();
-        iss >> std::ws;
+        iss >> ws;
         if (static_cast<int>(values.size()) == count && iss.eof()) {
             return values;
         }
-        std::cout << "Please enter exactly " << count << " numbers separated by spaces.\n";
+        cout << "Please enter exactly " << count << " numbers separated by spaces.\n";
     }
 }
 
-Matrix readMatrix(const std::string& name) {
+Matrix readMatrix(const string& name) {
     const int rows = readPositiveInt("Rows of " + name + ": ");
     const int cols = readPositiveInt("Columns of " + name + ": ");
     Matrix matrix(rows, cols, 0.0L);
 
-    std::cout << "Enter " << name << " row by row.\n";
+    cout << "Enter " << name << " row by row.\n";
     for (int i = 0; i < rows; ++i) {
-        auto row = readEntries("  row " + std::to_string(i + 1) + ": ", cols);
+        auto row = readEntries("  row " + to_string(i + 1) + ": ", cols);
         for (int j = 0; j < cols; ++j) {
             matrix[i][j] = row[j];
         }
@@ -219,8 +218,8 @@ Matrix readMatrix(const std::string& name) {
     return matrix;
 }
 
-std::vector<ld> readVector(const std::string& name, int length) {
-    std::cout << "Enter vector " << name << " with " << length << " entries.\n";
+vector<ld> readVector(const string& name, int length) {
+    cout << "Enter vector " << name << " with " << length << " entries.\n";
     return readEntries("  values: ", length);
 }
 
