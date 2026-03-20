@@ -7,6 +7,8 @@
 #include <sstream>
 #include <stdexcept>
 
+using namespace std;
+
 namespace matrix_solver {
 
 bool isZero(ld value, ld tolerance) {

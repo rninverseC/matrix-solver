@@ -3,10 +3,12 @@
 #include "matrix_solver/io.hpp"
 #include "matrix_solver/operations.hpp"
 
+#include <exception>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
+
+using namespace std;
 
 namespace matrix_solver {
 
@@ -118,107 +120,6 @@ void handleSolveLinearSystem() {
     std::cout << "\n";
 }
 
-void handleSpaces() {
-    const Matrix A = readMatrix("A");
-    printBasis(rowSpaceBasis(A), "Row space");
-    printBasis(columnSpaceBasis(A), "Column space");
-    printBasis(nullSpaceBasis(A), "Null space");
-}
-
-void handlePlu() {
-    const Matrix A = readMatrix("A");
-    const auto result = pluDecomposition(A);
-    if (!result.success) {
-        std::cout << result.message << "\n";
-        return;
-    }
-    std::cout << result.message << "\n";
-    printMatrix(result.P, "P");
-    printMatrix(result.L, "L");
-    printMatrix(result.U, "U");
-}
-
-void handleQr() {
-    const Matrix A = readMatrix("A");
-    const auto result = reducedQR(A);
-    std::cout << result.message << "\n";
-    std::cout << "Rank = " << result.rank << "\n";
-    printMatrix(result.Q, "Q");
-    printMatrix(result.R, "R");
-}
-
-void handleProjection() {
-    const Matrix A = readMatrix("A");
-    const auto b = readVector("b", A.rows);
-    printVector(projectOntoColumnSpace(A, b), "proj_Col(A)(b)");
-}
-
-void handleLeastSquares() {
-    const Matrix A = readMatrix("A");
-    const auto b = readVector("b", A.rows);
-    std::vector<ld> projection;
-    std::vector<ld> residual;
-    const auto x = leastSquaresSolution(A, b, &projection, &residual);
-    printVector(x, "Least-squares solution x_hat");
-    printVector(projection, "Projection A*x_hat");
-    printVector(residual, "Residual b - A*x_hat");
-    std::cout << "Residual norm = " << formatNumber(vectorNorm(residual)) << "\n";
-}
-
-void handleCharacteristicPolynomial() {
-    const Matrix A = readMatrix("A");
-    const auto coefficients = characteristicPolynomialCoefficients(A);
-    std::cout << "Characteristic polynomial:\n";
-    std::cout << "  " << characteristicPolynomialToString(coefficients) << "\n";
-    std::cout << "Coefficients [1, c1, c2, ..., cn] = " << formatVector(coefficients) << "\n";
-}
-
-void handlePowerMethod() {
-    const Matrix A = readMatrix("A");
-    const auto result = dominantEigenpair(A);
-    if (!result.success) {
-        std::cout << result.message << "\n";
-        return;
-    }
-    std::cout << result.message << "\n";
-    std::cout << "Iterations = " << result.iterations << "\n";
-    std::cout << "Approximate dominant eigenvalue = " << formatNumber(result.eigenvalue) << "\n";
-    std::cout << "Residual norm = " << formatNumber(result.residualNorm) << "\n";
-    printVector(result.eigenvector, "Approximate dominant eigenvector");
-}
-
-void handleSymmetricEigen() {
-    const Matrix A = readMatrix("A");
-    const auto result = jacobiEigenDecomposition(A);
-    if (!result.success) {
-        std::cout << result.message << "\n";
-        return;
-    }
-    std::cout << result.message << "\n";
-    std::cout << "Eigenvalues = " << formatVector(result.eigenvalues) << "\n";
-    printMatrix(result.eigenvectors, "Eigenvector matrix Q (columns are eigenvectors)");
-}
-
-void handleSvd() {
-    const Matrix A = readMatrix("A");
-    const auto result = compactSVD(A);
-    if (!result.success) {
-        std::cout << result.message << "\n";
-        return;
-    }
-    std::cout << result.message << "\n";
-    std::cout << "Rank = " << result.rank << "\n";
-    std::cout << "Singular values = " << formatVector(result.singularValues) << "\n";
-    printMatrix(result.U, "U");
-    printMatrix(result.Sigma, "Sigma");
-    printMatrix(result.Vt, "V^T");
-}
-
-void handlePseudoInverse() {
-    const Matrix A = readMatrix("A");
-    printMatrix(pseudoInverse(A), "A^(+)");
-}
-
 void printMenu() {
     std::cout << "\n=== Linear Algebra Matrix Calculator ===\n";
     std::cout << " 1. Add two matrices\n";
@@ -233,16 +134,6 @@ void printMenu() {
     std::cout << "10. Inverse\n";
     std::cout << "11. Rank\n";
     std::cout << "12. Solve Ax = b\n";
-    std::cout << "13. Bases for the row space, column space, and null space\n";
-    std::cout << "14. PLU factorization\n";
-    std::cout << "15. Gram-Schmidt / reduced QR factorization\n";
-    std::cout << "16. Orthogonal projection onto Col(A)\n";
-    std::cout << "17. Least-squares solution\n";
-    std::cout << "18. Characteristic polynomial\n";
-    std::cout << "19. Dominant eigenpair (power method)\n";
-    std::cout << "20. Symmetric eigendecomposition\n";
-    std::cout << "21. Compact singular value decomposition (SVD)\n";
-    std::cout << "22. Pseudoinverse\n";
     std::cout << " 0. Exit\n";
 }
 
@@ -250,11 +141,11 @@ void printMenu() {
 
 void runCalculator() {
     std::cout << "Matrix Calculator for Linear Algebra\n";
-    std::cout << "This CLI covers the main computational topics from Lay's linear algebra text.\n";
+    std::cout << "This CLI now includes only the 12 core matrix operations you asked for.\n";
 
     while (true) {
         printMenu();
-        const int choice = readIntInRange("Choose an option: ", 0, 22);
+        const int choice = readIntInRange("Choose an option: ", 0, 12);
 
         if (choice == 0) {
             std::cout << "Good luck with your linear algebra work.\n";
@@ -298,36 +189,6 @@ void runCalculator() {
                     break;
                 case 12:
                     handleSolveLinearSystem();
-                    break;
-                case 13:
-                    handleSpaces();
-                    break;
-                case 14:
-                    handlePlu();
-                    break;
-                case 15:
-                    handleQr();
-                    break;
-                case 16:
-                    handleProjection();
-                    break;
-                case 17:
-                    handleLeastSquares();
-                    break;
-                case 18:
-                    handleCharacteristicPolynomial();
-                    break;
-                case 19:
-                    handlePowerMethod();
-                    break;
-                case 20:
-                    handleSymmetricEigen();
-                    break;
-                case 21:
-                    handleSvd();
-                    break;
-                case 22:
-                    handlePseudoInverse();
                     break;
                 default:
                     std::cout << "Unknown option.\n";

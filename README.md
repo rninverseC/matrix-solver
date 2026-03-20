@@ -1,11 +1,11 @@
 # Linear Algebra Matrix Calculator
 
-This project is a C++ command-line matrix calculator aimed at the main computational topics from Lay's linear algebra book.
+This project is a C++ command-line matrix calculator focused on 12 core matrix operations.
 
 ## Build
 
 ```bash
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic -Iinclude src/*.cpp -o matrix_calculator
+clang++ -std=c++17 -O2 -Wall -Wextra -pedantic -Iinclude src/*.cpp -o matrix_calculator
 ```
 
 ## Run
@@ -16,32 +16,28 @@ g++ -std=c++17 -O2 -Wall -Wextra -pedantic -Iinclude src/*.cpp -o matrix_calcula
 
 ## Included operations
 
-- Matrix addition, subtraction, scalar multiplication, transpose, and matrix multiplication
-- Dot products
-- REF and RREF
-- Determinant, inverse, and rank
-- Solving `Ax = b`
-- Bases for the row space, column space, and null space
-- PLU factorization
-- Reduced QR factorization with Gram-Schmidt
-- Orthogonal projection and least-squares solutions
-- Characteristic polynomial
-- Dominant eigenpair via the power method
-- Symmetric eigendecomposition
-- Compact SVD
-- Moore-Penrose pseudoinverse
+- Add two matrices
+- Subtract two matrices
+- Multiply a matrix by a scalar
+- Multiply two matrices
+- Transpose a matrix
+- Dot product of two vectors
+- Row echelon form (REF)
+- Reduced row echelon form (RREF)
+- Determinant
+- Inverse
+- Rank
+- Solve `Ax = b`
 
 ## Project layout
 
 - `include/matrix_solver/types.hpp`: matrix/result data types
 - `include/matrix_solver/io.hpp` and `src/io.cpp`: input, formatting, and printing
-- `include/matrix_solver/operations.hpp` and `src/operations.cpp`: matrix algorithms and decompositions
+- `include/matrix_solver/operations.hpp` and `src/operations.cpp`: the 12 supported matrix algorithms
 - `include/matrix_solver/cli.hpp` and `src/cli.cpp`: menu flow and command handlers
 - `src/main.cpp`: tiny entry point
 
 ## Notes
 
 - The calculator uses floating-point arithmetic, so very ill-conditioned matrices may show small numerical error.
-- The spectral tools are split into:
-  - a general dominant-eigenvalue approximation via the power method
-  - a full eigendecomposition routine for symmetric matrices
+- The CLI intentionally stops at the 12 operations listed above.

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -67,48 +66,6 @@ struct LinearSystemResult {
     std::vector<ld> particularSolution;
     std::vector<std::vector<ld>> nullSpaceBasis;
     Matrix augmentedRref;
-};
-
-struct LUResult {
-    bool success = false;
-    std::string message;
-    Matrix P;
-    Matrix L;
-    Matrix U;
-};
-
-struct QRResult {
-    bool success = false;
-    std::string message;
-    int rank = 0;
-    Matrix Q;
-    Matrix R;
-};
-
-struct PowerMethodResult {
-    bool success = false;
-    std::string message;
-    int iterations = 0;
-    ld eigenvalue = 0.0L;
-    ld residualNorm = 0.0L;
-    std::vector<ld> eigenvector;
-};
-
-struct SymmetricEigenResult {
-    bool success = false;
-    std::string message;
-    std::vector<ld> eigenvalues;
-    Matrix eigenvectors;
-};
-
-struct SVDResult {
-    bool success = false;
-    std::string message;
-    int rank = 0;
-    std::vector<ld> singularValues;
-    Matrix U;
-    Matrix Sigma;
-    Matrix Vt;
 };
 
 }  // namespace matrix_solver
