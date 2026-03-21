@@ -390,4 +390,4 @@ LinearSystemResult solveLinearSystem(const Matrix& A, const vector<ld>& b) {
     return result;
 }
 
-}  // namespace matrix_solver
+} 
