@@ -140,15 +140,14 @@ void printMenu() {
 }  // namespace
 
 void runCalculator() {
-    cout << "Matrix Calculator for Linear Algebra\n";
-    cout << "This CLI now includes only the 12 core matrix operations you asked for.\n";
+    cout << "matrix calculator\n";
+    cout << "12 matrix operations.\n";
 
     while (true) {
         printMenu();
         const int choice = readIntInRange("Choose an option: ", 0, 12);
 
         if (choice == 0) {
-            cout << "Good luck with your linear algebra work.\n";
             break;
         }
 

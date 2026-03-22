@@ -319,7 +319,7 @@ Matrix inverseMatrix(const Matrix& matrix) {
         for (int j = 0; j < matrix.cols; ++j) {
             const ld expected = (i == j) ? 1.0L : 0.0L;
             if (!nearlyEqual(reduced[i][j], expected)) {
-                throw runtime_error("This matrix is singular, so it has no inverse.");
+                throw runtime_error("This matrix is singular, so it doesnt have inverse.");
             }
         }
     }
@@ -337,7 +337,7 @@ Matrix inverseMatrix(const Matrix& matrix) {
 
 LinearSystemResult solveLinearSystem(const Matrix& A, const vector<ld>& b) {
     if (A.rows != static_cast<int>(b.size())) {
-        throw runtime_error("The right-hand side vector must have the same number of rows as A.");
+        throw runtime_error("The right hand side vector must have the same number of rows as A");
     }
 
     Matrix right(A.rows, 1, 0.0L);
@@ -390,4 +390,4 @@ LinearSystemResult solveLinearSystem(const Matrix& A, const vector<ld>& b) {
     return result;
 }
 
-} 
+}  //namespace matrix_solver

@@ -26,8 +26,8 @@ struct Matrix {
         }
     }
 
-    explicit Matrix(vector<vector<ld>> values)
-        : rows(static_cast<int>(values.size())),
+    explicit Matrix(vector<vector<ld>> values): 
+          rows(static_cast<int>(values.size())),
           cols(values.empty() ? 0 : static_cast<int>(values.front().size())),
           data(std::move(values)) {
         for (const auto& row : data) {
